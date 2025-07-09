@@ -294,13 +294,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function init() {
         carregarDB(); renderizarCidades(); renderizarPrestadores();
         DOMElements.dataAtual.textContent = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Recife' });
-    }
-    window.enviarWhatsapp = (nome, numero) => {
-        if (!numero) return alert("Sem celular cadastrado.");
-        const mensagem = `Olá, ${numero}! Entro em contato referente aos seus serviços.`;
-        const link = `https://wa.me/55${nome.replace(/\D/g, '')}?text=${encodeURIComponent(mensagem)}`;
-        window.open(link, '_blank');
-    };
+   }
+        window.enviarWhatsapp = (nome, numero) => {
+            if (!numero) return alert("Sem celular cadastrado.");
+            const mensagem = `Olá, ${numero}! Entro em contato referente aos seus serviços.`;
+            const link = `https://wa.me/55${nome.replace(/\D/g, '')}?text=${encodeURIComponent(mensagem)}`;
+            window.open(link, '_blank');
+        };
     
     document.getElementById('abrir-modal-prestador-btn').addEventListener('click', () => abrirModalPrestador());
     document.getElementById('abrir-modal-cidades-btn').addEventListener('click', () => abrirModal(DOMElements.cidadeModal));
