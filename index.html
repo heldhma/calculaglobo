@@ -244,7 +244,7 @@
         const abrirModal = (modal) => modal.classList.add('ativo');
         const fecharModal = (modal) => modal.classList.remove('ativo');
 
-        // --- CIDADES ---
+        // editar CIDADES (recife, jaboatao, olinda e paulista já estão no padrão)
         let cidadeEmEdicaoId = null;
         function renderizarCidades() {
             DOMElements.cidadesListaContainer.innerHTML = '';
@@ -301,7 +301,7 @@
         });
         document.getElementById('cancelar-edicao-cidade-btn').addEventListener('click', resetarFormCidade);
         
-        // --- PRESTADORES ---
+        // prestadores de serviço
         let prestadorEmEdicaoId = null;
         function renderizarPrestadores(lista = db.prestadores) {
             DOMElements.listaPrestadores.innerHTML = '';
@@ -378,7 +378,7 @@
             prestadorEmEdicaoId = null;
         });
 
-        // --- CALCULADORA ---
+        // calculadora impostos (mudar lógica aqui)
         document.getElementById('calcular-btn').addEventListener('click', () => {
             const valorBruto = parseFloat(document.getElementById('calc-valor-bruto').value);
             const cidadeId = Number(document.getElementById('calc-cidade').value);
@@ -408,7 +408,7 @@
             DOMElements.resultadoCalculo.innerHTML = `<h3>Resumo do Cálculo</h3><p>Valor Bruto: <span>R$ ${valorBruto.toFixed(2)}</span></p><p>INSS (11%): <span class="desconto">- R$ ${valorINSS.toFixed(2)}</span></p><p>ISS (${cidade.iss_aliquota}%): <span class="desconto">- R$ ${valorISS.toFixed(2)}</span></p><p>IRRF (Tabela Progressiva): <span class="desconto">- R$ ${valorIRRF.toFixed(2)}</span></p><hr><p><strong>Valor Líquido:</strong> <span class="total">R$ ${valorLiquido.toFixed(2)}</span></p>`;
         });
         
-        // --- CEP E OUTROS ---
+        // api viacep
         document.getElementById('cep').addEventListener('input', async (e) => {
             const cep = e.target.value.replace(/\D/g, '');
             if (cep.length === 8) {
