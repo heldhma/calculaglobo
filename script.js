@@ -297,8 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.enviarWhatsapp = (nome, numero) => {
         if (!numero) return alert("Sem celular cadastrado.");
-        const mensagem = `Olá, ${nome}! Entro em contato referente aos seus serviços.`;
-        const link = `https://wa.me/55${numero.replace(/\D/g, '')}?text=${encodeURIComponent(mensagem)}`;
+        const mensagem = `Olá, ${numero}! Entro em contato referente aos seus serviços.`;
+        const link = `https://wa.me/55${nome.replace(/\D/g, '')}?text=${encodeURIComponent(mensagem)}`;
         window.open(link, '_blank');
     };
     
