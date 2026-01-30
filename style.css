@@ -48,6 +48,8 @@ body { font-family: 'Inter', sans-serif; background-color: var(--cor-fundo); col
 .btn-whatsapp { background-color: var(--cor-sucesso); }
 .btn-editar { background-color: var(--cor-aviso); color: #333; }
 .btn-deletar { background-color: var(--cor-perigo); }
+.btn-imprimir { background-color: #6f42c1; }
+.btn-imprimir:hover { background-color: #59359a; }
 .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; }
 .modal.ativo { opacity: 1; visibility: visible; }
 .modal-content { background-color: #fff; padding: 32px; border: none; width: 90%; max-width: 900px; border-radius: var(--raio-borda); position: relative; box-shadow: var(--sombra-caixa); transform: scale(0.95); transition: var(--transicao-rapida); max-height: 90vh; overflow-y: auto; }
