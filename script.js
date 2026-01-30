@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const DB_KEY = 'gestorAppDB_final_v9';
     let db = {
@@ -49,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const abrirModal = (modal) => modal.classList.add('ativo');
     const fecharModal = (modal) => modal.classList.remove('ativo');
 
-    // --- CIDADES ---
     let cidadeEmEdicaoId = null;
     function renderizarCidades() {
         DOMElements.cidadesListaContainer.innerHTML = '';
@@ -107,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('cancelar-edicao-cidade-btn').addEventListener('click', resetarFormCidade);
     
-    // --- PRESTADORES ---
     let prestadorEmEdicaoId = null;
     function renderizarPrestadores(lista = db.prestadores) {
         DOMElements.listaPrestadores.innerHTML = '';
@@ -134,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.nomeSelecionado.textContent = p.nome;
         const cidade = db.cidades.find(c => c.id == p.cidadeId) || {nome: 'N/A'};
         DOMElements.detalhesPrestador.innerHTML = `<div class="detalhes-grid">
-            <div class="detalhe-item"><span>CPF/RG</span><strong>${p.cpf || 'N/A'} / ${p.rg || 'N/A'}</strong></div>
+            <div class="detalhe-item"><span>Documentos</span><strong>CPF: ${p.cpf || 'N/A'} <br> RG: ${p.rg || 'N/A'} <br> CNPJ: ${p.cnpj || 'N/A'}</strong></div>
             <div class="detalhe-item"><span>Contato</span><strong>${p.celular || 'N/A'} / ${p.email || 'N/A'}</strong></div>
             <div class="detalhe-item"><span>Endereço</span><strong>${p.logradouro || ''}, ${p.numero || 'S/N'} - ${p.bairro || ''}, ${cidade.nome} - ${p.estado || ''}</strong></div>
             <div class="detalhe-item"><span>CEP</span><strong>${p.cep || 'N/A'}</strong></div>
@@ -143,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="detalhe-item"><span>Conta</span><strong>Ag. ${p.agencia_bancaria || 'N/A'} / Conta ${p.conta_bancaria || 'N/A'} (${p.tipo_conta || 'N/A'})</strong></div>
         </div>
         <div class="acoes">
+            <button class="btn btn-acao btn-imprimir" onclick="gerarRelatorio(${p.id})">🖨️ Imprimir Ficha</button>
             <button class="btn btn-acao btn-whatsapp" onclick="enviarWhatsapp('${p.celular}', \`${p.nome}\`)">WhatsApp</button>
             <button class="btn btn-acao btn-editar" onclick="abrirModalPrestador(${p.id})">Editar</button>
             <button class="btn btn-acao btn-deletar" onclick="deletarPrestador(${p.id})">Deletar</button>
@@ -161,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
         prestadorEmEdicaoId = id;
         DOMElements.prestadorForm.reset();
         document.getElementById('prestador-modal-titulo').textContent = id ? 'Editar Prestador' : 'Adicionar Prestador';
-        // Popula o dropdown de cidades no modal do prestador
         const cidadeSelect = DOMElements.prestadorForm.querySelector('#cidadeId');
         cidadeSelect.innerHTML = '<option value="">Selecione...</option>';
         db.cidades.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(c => cidadeSelect.add(new Option(c.nome, c.id)));
@@ -190,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
         prestadorEmEdicaoId = null;
     });
 
-    // --- CALCULADORA ---
     document.getElementById('calcular-btn').addEventListener('click', () => {
         const valorBruto = parseFloat(document.getElementById('calc-valor-bruto').value);
         const cidadeId = Number(document.getElementById('calc-cidade').value);
@@ -220,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.resultadoCalculo.innerHTML = `<h3>Resumo do Cálculo</h3><p>Valor Bruto: <span>R$ ${valorBruto.toFixed(2)}</span></p><p>INSS (11%): <span class="desconto">- R$ ${valorINSS.toFixed(2)}</span></p><p>ISS (${cidade.iss_aliquota}%): <span class="desconto">- R$ ${valorISS.toFixed(2)}</span></p><p>IRRF (Tabela Progressiva): <span class="desconto">- R$ ${valorIRRF.toFixed(2)}</span></p><hr><p><strong>Valor Líquido:</strong> <span class="total">R$ ${valorLiquido.toFixed(2)}</span></p>`;
     });
     
-    // --- CEP ---
     document.getElementById('cep').addEventListener('input', async (e) => {
         const cep = e.target.value.replace(/\D/g, '');
         if (cep.length === 8) {
@@ -242,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // --- FUNÇÕES EXTRAS ---
     const exportarParaJSON = () => {
         if (db.prestadores.length === 0 && db.cidades.length === 0) return alert('Não há dados para exportar.');
         const dataStr = JSON.stringify(db, null, 2);
@@ -273,14 +267,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         e.target.value = '';
     };
-    const gerarRelatorio = () => {
-        if (db.prestadores.length === 0) return alert('Nenhum prestador para gerar relatório.');
-        let html = `<html><head><title>Relatório de Prestadores</title><style>@media print { .page-break { page-break-after: always; } } body{font-family:sans-serif;margin:20px;} h1,h2{text-align:center;margin-bottom:20px;color:#333} .prestador-card{border:1px solid #ccc;padding:20px;margin-bottom:20px;border-radius:8px;} .prestador-card h3{margin-top:0;border-bottom:2px solid #eee;padding-bottom:10px;margin-bottom:15px;} .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;} .item p{margin:0;padding:5px 0;border-bottom:1px solid #f0f0f0;} .item strong{color:#555;margin-right:8px;}</style></head><body>`;
-        html += `<h1>Relatório de Prestadores</h1><p style="text-align:center;">Gerado em: ${new Date().toLocaleString('pt-BR')}</p>`;
-        db.prestadores.forEach(p => {
+    
+    window.gerarRelatorio = (idPrestador = null) => {
+        let lista = [];
+        let tituloRelatorio = "Relatório de Prestadores";
+
+        if (idPrestador && typeof idPrestador === 'number') {
+            lista = db.prestadores.filter(p => p.id === idPrestador);
+            tituloRelatorio = "Ficha Cadastral do Prestador";
+        } else {
+            lista = db.prestadores;
+        }
+
+        if (lista.length === 0) return alert('Nenhum prestador encontrado para gerar o relatório.');
+        
+        let html = `<html><head><title>${tituloRelatorio}</title><style>@media print { .page-break { page-break-after: always; } } body{font-family:sans-serif;margin:20px;} h1,h2{text-align:center;margin-bottom:20px;color:#333} .prestador-card{border:1px solid #ccc;padding:20px;margin-bottom:20px;border-radius:8px;} .prestador-card h3{margin-top:0;border-bottom:2px solid #eee;padding-bottom:10px;margin-bottom:15px;} .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;} .item p{margin:0;padding:5px 0;border-bottom:1px solid #f0f0f0;} .item strong{color:#555;margin-right:8px;}</style></head><body>`;
+        html += `<h1>${tituloRelatorio}</h1><p style="text-align:center;">Gerado em: ${new Date().toLocaleString('pt-BR')}</p>`;
+        
+        lista.forEach(p => {
             const cidade = db.cidades.find(c => c.id == p.cidadeId) || {nome: 'N/A'};
             html += `<div class="prestador-card page-break"><h3>${p.nome}</h3><hr><div class="grid">
-                     <div class="item"><h4>Dados Pessoais</h4><p><strong>CPF:</strong>${p.cpf || ''}</p><p><strong>RG:</strong>${p.rg || ''}</p><p><strong>Celular:</strong>${p.celular || ''}</p><p><strong>Email:</strong>${p.email || ''}</p><p><strong>PIS/PASEP:</strong>${p.pis_pasep || ''}</p></div>
+                     <div class="item"><h4>Dados Pessoais</h4>
+                        <p><strong>CPF:</strong>${p.cpf || ''}</p>
+                        <p><strong>CNPJ:</strong>${p.cnpj || ''}</p>
+                        <p><strong>RG:</strong>${p.rg || ''}</p>
+                        <p><strong>Celular:</strong>${p.celular || ''}</p>
+                        <p><strong>Email:</strong>${p.email || ''}</p>
+                        <p><strong>PIS/PASEP:</strong>${p.pis_pasep || ''}</p>
+                     </div>
                      <div class="item"><h4>Endereço</h4><p><strong>Endereço:</strong>${p.logradouro || ''}, ${p.numero || 'S/N'}</p><p><strong>Bairro:</strong>${p.bairro || ''}</p><p><strong>Cidade:</strong>${cidade.nome} - ${p.estado || ''}</p><p><strong>CEP:</strong>${p.cep || ''}</p></div>
                      <div class="item" style="grid-column: 1 / -1;"><h4>Dados de Pagamento</h4><p><strong>Banco:</strong>${p.nome_banco || ''} (${p.codigo_banco || ''}) | <strong>Agência:</strong>${p.agencia_bancaria || ''} | <strong>Conta:</strong>${p.conta_bancaria || ''} (${p.tipo_conta || ''})</p><p><strong>Emissão:</strong>${p.emite_nf_rpa || ''} | <strong>Forma de Pagamento:</strong>${p.tipo_pagamento || ''}</p></div>
                      </div></div>`;
@@ -294,13 +308,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function init() {
         carregarDB(); renderizarCidades(); renderizarPrestadores();
         DOMElements.dataAtual.textContent = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Recife' });
-   }
-        window.enviarWhatsapp = (nome, numero) => {
-            if (!numero) return alert("Sem celular cadastrado.");
-            const mensagem = `Olá, ${numero}! Entro em contato referente aos seus serviços.`;
-            const link = `https://wa.me/55${nome.replace(/\D/g, '')}?text=${encodeURIComponent(mensagem)}`;
-            window.open(link, '_blank');
-        };
+    }
+    window.enviarWhatsapp = (nome, numero) => {
+        if (!numero) return alert("Sem celular cadastrado.");
+        const mensagem = `Olá, ${nome}! Entro em contato referente aos seus serviços.`;
+        const link = `https://wa.me/55${numero.replace(/\D/g, '')}?text=${encodeURIComponent(mensagem)}`;
+        window.open(link, '_blank');
+    };
     
     document.getElementById('abrir-modal-prestador-btn').addEventListener('click', () => abrirModalPrestador());
     document.getElementById('abrir-modal-cidades-btn').addEventListener('click', () => abrirModal(DOMElements.cidadeModal));
@@ -308,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.close').forEach(btn => btn.addEventListener('click', (e) => fecharModal(e.target.closest('.modal'))));
     document.getElementById('export-json-btn').addEventListener('click', exportarParaJSON);
     document.getElementById('import-json-btn').addEventListener('click', () => DOMElements.jsonFileInput.click());
-    document.getElementById('gerar-relatorio-btn').addEventListener('click', gerarRelatorio);
+    document.getElementById('gerar-relatorio-btn').addEventListener('click', () => gerarRelatorio());
     DOMElements.jsonFileInput.addEventListener('change', importarDeJSON);
     DOMElements.searchInput.addEventListener('input', () => {
          const termo = DOMElements.searchInput.value.toLowerCase().trim();
